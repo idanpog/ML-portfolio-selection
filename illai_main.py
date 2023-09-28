@@ -36,6 +36,7 @@ if __name__ == '__main__':
 
     print(f"real ratio: {real_ratio}")
     print(f"preds ratio: {preds_ratio}")
+    print("Boing Boing")
 
 
     # tickers = ['GOOGL', 'AAPL']
