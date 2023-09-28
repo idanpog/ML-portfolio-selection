@@ -11,9 +11,9 @@ from ideas.portfolio import Portfolio
 import utils
 
 
-class MarketPortfolio(Portfolio):
+class MarketPortfolio():
     def __init__(self, weights=None) -> None:
-        super().__init__(weights)
+        pass
 
     def train(self, train_data: pd.DataFrame) -> None:
         self.train_data = train_data
@@ -34,7 +34,7 @@ class MarketPortfolio(Portfolio):
         print("idk what to do here")
         pass
 
-    def _get_allocation_based_on_market_value(df):
+    def _get_allocation_based_on_market_value(self, df):
         """
         Calculates allocation based on market value.
 
