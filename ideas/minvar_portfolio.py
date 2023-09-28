@@ -22,10 +22,15 @@ class MinVarPortfolio(Portfolio):
 
         Output (optional): weights vector.
         """
-        c = tick2df.cov()
+        # calculate the relative return for each stock
+        tick2df = tick2df.interpolate()
+        returns = tick2df['Adj Close'].pct_change(1).dropna()
+        c = returns.cov()
         e = np.ones(len(c))
         x_min_weights = (np.linalg.inv(c) @ e) / (e.T @ np.linalg.inv(c) @ e)
         self.min_var_portfolio = x_min_weights
+
+
 
     def get_portfolio(self, train_data: pd.DataFrame) -> np.array:
         """
