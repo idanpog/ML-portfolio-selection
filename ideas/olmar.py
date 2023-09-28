@@ -3,7 +3,7 @@
 import pandas as pd
 import numpy as np
 from time import time
-import portfolio
+from ideas.portfolio import Portfolio as portfolio
 import matplotlib.pyplot as plt
 
 class olmar(portfolio):
@@ -127,10 +127,6 @@ def best_constant_stock(X):
     Ss.append(S)
   return best_stock, Ss
 
-data = pd.read_csv("nyse_o.csv").to_numpy()
-
-data_titles = ['NYSE(O)', 'NYSE (N)', 'DJA', 'TSE']
-data_names = ['nyse_o', 'nyse_n', 'djia', 'tse']
 
 def aux_OLMAR_results(data):
   b, Ss = OLMAR_portfolio_sel(eps=10, w=5, X=data, n=data.shape[0])
@@ -139,38 +135,6 @@ def aux_OLMAR_results(data):
 
   return xs, Ss
 
-def plot_funcs_per_dataset(func, mark=False):
-  fig, ax = plt.subplots(2, 2, figsize=(7, 7))
-  fig.suptitle("OLMAR Returns compared to baseline")
-
-  # plt.yscale('log')
-
-  for i, (name, title) in enumerate(zip(data_names, data_titles)):
-    data = pd.read_csv(f"{name}.csv").to_numpy()
-
-    x, y = func(data)
-
-    ax[i//2, i%2].set_title(title)
-
-    best_stock, z = best_constant_stock(data[3:,:])
-
-    xlabel = 'Epsilon' if mark else 'time'
-
-    if not mark:
-      ax[i//2, i%2].semilogy(x, y, label='OLMAR')
-      ax[i//2, i%2].semilogy(x, z, label='Best-Stock')
-    else:
-      ax[i//2, i%2].loglog(x, y, label='OLMAR', marker='^')
-      ax[i//2, i%2].loglog(x, z[-1]*np.ones(x.size), marker='^')
-
-
-    ax[i//2, i%2].set_xlabel(xlabel)
-    ax[i//2, i%2].set_ylabel("Total Wealth Achieved")
-    ax[i//2, i%2].legend(loc="upper left")
-
-  plt.legend()
-  fig.tight_layout()
-  plt.show()
 
 def epsilon_checks(X, w=5):
   new_list = range(5, 105)
@@ -204,9 +168,6 @@ def ws_check(X, eps=10):
 
   return ws_to_check, Ss
 
-plot_funcs_per_dataset(aux_OLMAR_results)
-
-plot_funcs_per_dataset(epsilon_checks, mark=False)
 
 def plot_w(func, mark=False):
   fig, ax = plt.subplots(2, 2, figsize=(7, 7))
@@ -237,4 +198,3 @@ def plot_w(func, mark=False):
   fig.tight_layout()
   plt.show()
 
-plot_funcs_per_dataset(ws_check, mark=True)
