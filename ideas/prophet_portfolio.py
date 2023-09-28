@@ -6,6 +6,7 @@ import utils
 import ujson as json
 from prophet.serialize import model_to_dict, model_from_dict
 
+
 class ProphetPortfolio(Portfolio):
     def __init__(self, weights=None) -> None:
         """
@@ -14,12 +15,9 @@ class ProphetPortfolio(Portfolio):
         Note: If you use a pre-saved weights, then your submission must include this file.
         """
         if weights:
-            self.trained_models = {sym : model_from_dict(w) for sym, w in weights.items()}
+            self.trained_models = {sym: model_from_dict(w) for sym, w in weights.items()}
 
-
-
-
-    def train(self, tick2df: dict) ->:
+    def train(self, tick2df: dict):
         """
         Input: train_data: a dataframe as downloaded from yahoo finance,
         containing about 5 years of history, with all the training data.
@@ -31,20 +29,22 @@ class ProphetPortfolio(Portfolio):
         self.b = np.ones(len(self.trained_models)) / len(self.trained_models)
 
         # save_models
-        weights = {sym : model_to_dict(model) for sym, model in self.trained_models.items()}
+        weights = {sym: model_to_dict(model) for sym, model in self.trained_models.items()}
         with open("saved_models", "w") as f:
             f.write(json.dumps(weights))
         return weights
 
+    def predict_september(self, sym):
+        dates = pd.DataFrame(pd.date_range(start="2019-08-01", end="2020-09-30")).rename(columns={0: 'ds'})
+        return self.predict(sym, dates)
 
-    def predict(self, sym, date):
+    def predict(self, sym: str, dates: pd.DataFrame) -> pd.DataFrame:
         """
         Input: sym: a string representing the ticker of the stock.
-        date: a string representing the date to predict.
-        Output: a float representing the predicted price of the stock.
+        date: Dataframe of dates to predict in string representation.
+        Output: Dataframe of predictions for input dates.
         """
-        return self.trained_models[sym].predict(date)
-
+        return self.trained_models[sym].predict(dates)
 
     def get_portfolio(self, train_data: pd.DataFrame) -> np.array:
         """
@@ -57,12 +57,11 @@ class ProphetPortfolio(Portfolio):
         test_date = len(train_dates) + 1
         x = self.get_prices(train_data, test_date)
 
-        lam = 1/3
-        b1 = b + lam*(x-np.mean(x))
-        b1 = b1/np.sum(b1)
+        lam = 1 / 3
+        b1 = b + lam * (x - np.mean(x))
+        b1 = b1 / np.sum(b1)
         self.b = b1
         return b1
-
 
         # TODO
         # return weights
@@ -72,6 +71,3 @@ class ProphetPortfolio(Portfolio):
     def get_prices(self, train_data: pd.DataFrame, test_date) -> np.array:
         x = [(self.predict(sym, test_date), sym) for sym in self.trained_models.keys()]
         x = np.array(x)
-
-
-

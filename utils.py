@@ -2,7 +2,7 @@ import pandas as pd
 import yfinance as yf
 
 
-def load_data(start_date="2015-1-1", end_date="2020-1-1", tickers=None):
+def load_data(start_date="2015-1-1", end_date="2020-08-31", tickers=None):
     """
     Input: start_date: a string representing the start date of the data.
     end_date: a string representing the end date of the data.
@@ -15,6 +15,7 @@ def load_data(start_date="2015-1-1", end_date="2020-1-1", tickers=None):
             "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")[0]
         tickers = tickers.Symbol.to_list()
     # Download the historical stock data for the tickers.
+    tickers = ['GOOGL', 'AAPL']
     data = yf.download(tickers, start=start_date, end=end_date).reset_index()
     data.rename(columns={'Date/': 'ds'}, inplace=True)
     
