@@ -38,7 +38,7 @@ def test_portfolio():
     strategy = Portfolio()
 
     # NOTE THAT THIS LINE ISN'T SUPPOSED TO BE HERE
-    strategy.train(full_train.pd.date_range(START_DATE, END_TRAIN_DATE))
+    strategy.train(full_train[full_train.index < END_TRAIN_DATE])
     # NOTE THAT THIS LINE ISN'T SUPPOSED TO BE HERE
 
     for test_date in pd.date_range(END_TRAIN_DATE, END_TEST_DATE):
