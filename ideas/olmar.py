@@ -8,12 +8,26 @@ import matplotlib.pyplot as plt
 
 class olmar(portfolio):
   def __init__(self, weights = np.nan ):
-    self.eps = 2
+    self.eps = 10
     self.w = 5
-    self.
+    self.b = weights
 
+  def train(self,train_data):
+    X = np.array(train_data)
+    (n, m) = X.shape
+    self.b = OLMAR_portfolio_sel(self.eps, self.w, X, n)
 
- OLMAR_portfolio_sel(eps, w, X, n)
+  def get_portfolio(self, train_data):
+    X = np.array(train_data)
+    (n, m) = X.shape
+    Y = np.ones(X.shape)
+    for i in range(1, X.shape[0]):
+      Y[i] = X[i] / X[i - 1]
+    inv_Y = 1 / Y
+    t= n-1
+    pred_next_price = (1 + np.sum(np.array([np.prod(inv_Y[ t- i:t + 1, :], axis=0) for i in range(self.w - 1)]),
+                                  axis=0)) / self.w
+    self.b = OLMAR(self.eps, self.w, pred_next_price, self.b)
 def simplex_proj(y):
   m = len(y)
   bget = False
@@ -88,7 +102,7 @@ def OLMAR_portfolio_sel(eps, w, X, n):
     pred_next_price = (1 + np.sum(np.array([np.prod(inv_Y[t-i:t+1,:], axis=0) for i in range(win_range-1)]), axis=0)) / curr_w
     b = OLMAR(eps, curr_w, pred_next_price, b)
     Ss.append(S)
-  return S, Ss
+  return b
 
 def best_constant_stock(X):
   m = X[0].size
