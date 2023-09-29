@@ -74,6 +74,7 @@ def test_portfolio(start_date, end_train_date, end_test_date):
     cov_matrix = full_train["Adj Close"].pct_change().cov()
     port_variance = np.dot(cur_portfolio.T, np.dot(cov_matrix, cur_portfolio))
     print("Portfolio Variance: ", port_variance)
+    return sharpe, port_variance
 
 
 if __name__ == "__main__":
