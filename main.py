@@ -27,7 +27,7 @@ def get_data(start_date,  end_date):
         wiki_table = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
         sp_tickers = wiki_table[0]
         tickers = [ticker.replace('.', '-') for ticker in sp_tickers['Symbol'].to_list()]
-        data = yf.download(tickers, START_DATE, END_TEST_DATE)
+        data = yf.download(tickers, start_date, end_date)
         # Save the data as a Pickle file for future use
         with open(CACHE_FILE, 'wb') as file:
             pickle.dump(data, file)
@@ -35,16 +35,16 @@ def get_data(start_date,  end_date):
     return data
 
 
-def test_portfolio(start):
-    full_train = get_data()
+def test_portfolio(start_date, end_train_date, end_test_date):
+    full_train = get_data(start_date, end_test_date)
     returns = []
     strategy = Portfolio()
 
     # NOTE THAT THIS LINE ISN'T SUPPOSED TO BE HERE
-    strategy.train(full_train[full_train.index < END_TRAIN_DATE])
+    strategy.train(full_train[full_train.index < end_train_date])
     # NOTE THAT THIS LINE ISN'T SUPPOSED TO BE HERE
 
-    for test_date in pd.date_range(END_TRAIN_DATE, END_TEST_DATE):
+    for test_date in pd.date_range(end_train_date, end_test_date):
         if test_date not in full_train.index:
             continue
         train = full_train[full_train.index < test_date]
@@ -67,4 +67,4 @@ def test_portfolio(start):
     print("Portfolio Variance: ", port_variance)
 
 if __name__ == '__main__':
-    test_portfolio()
+    test_portfolio(START_DATE, END_TRAIN_DATE, END_TEST_DATE)
