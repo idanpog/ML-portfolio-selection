@@ -1,8 +1,9 @@
 from main import test_portfolio
 import numpy as np
 
-def run(w, eps): -> float
 from datetime import datetime, timedelta
+
+USE_PROPHET = False
 
 
 def run(w, eps):
@@ -21,11 +22,15 @@ def run(w, eps):
         start_date = end_train_date.replace(year=end_train_date.year - 5)
 
         # Call the test_portfolio function
-        sharpe, var = test_portfolio(start_date, end_train_date, end_test_date)
+        sharpe, var = test_portfolio(
+            start_date,
+            end_train_date,
+            end_test_date,
+            stg_params={"w": w, "eps": eps, "is_prophet": USE_PROPHET},
+        )
         sharpe_results.append(sharpe)
         var_results.append(var)
 
         # Move to the previous month
         today = today.replace(day=1) - timedelta(days=1)
     return np.array(sharpe_results).mean()
-

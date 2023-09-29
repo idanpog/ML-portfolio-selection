@@ -34,7 +34,7 @@ def get_data(start_date, end_date):
         tickers = [
             ticker.replace(".", "-") for ticker in sp_tickers["Symbol"].to_list()
         ]
-        data = yf.download(tickers, START_DATE, END_TEST_DATE)
+        data = yf.download(tickers, start_date, end_date)
         # Save the data as a Pickle file for future use
         with open(CACHE_FILE, "wb") as file:
             pickle.dump(data, file)
@@ -42,10 +42,13 @@ def get_data(start_date, end_date):
     return data
 
 
-def test_portfolio(start_date, end_train_date, end_test_date):
+def test_portfolio(start_date, end_train_date, end_test_date, stg_params=None):
     full_train = get_data(start_date, end_test_date)
     returns = []
-    strategy = Portfolio()
+    if stg_params is None:
+        strategy = Portfolio()
+    else:
+        strategy = Portfolio(**stg_params)
 
     # NOTE THAT THIS LINE ISN'T SUPPOSED TO BE HERE
     strategy.train(full_train[full_train.index < end_train_date])
