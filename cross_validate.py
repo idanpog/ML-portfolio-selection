@@ -21,7 +21,7 @@ def run(w, eps):
         end_train_date = end_test_date.replace(day=1) - timedelta(days=1)
 
         # Calculate the start date, which is 5 years before the end_train_date
-        start_date = end_train_date.replace(year=end_train_date.year - 5) + timedelta(days=1)
+        start_date = end_train_date.replace(year=end_train_date.year - 4) + timedelta(days=1)
 
         # Call the test_portfolio function
         sharpe, var = test_portfolio(
@@ -35,6 +35,6 @@ def run(w, eps):
 
         # Move to the previous month
         today = today.replace(day=1) - timedelta(days=1)
-    return np.array(sharpe_results).mean()
+    return np.array(sharpe_results).mean(),np.array(var_results).mean()
 
 run(50, 2)

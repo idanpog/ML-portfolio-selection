@@ -36,7 +36,7 @@ def get_data(start_date, end_date):
         )
         sp_tickers = wiki_table[0]
         tickers = [
-            ticker.replace(".", "-") for ticker in sp_tickers["Symbol"].to_list()
+            ticker.replace(".", "-") for ticker in sp_tickers["Symbol"].to_list() if ticker not in ['KVUE', 'GEHC']
         ]
         print(f"downloading data for dates {start_date} till {end_date}")
         data = yf.download(tickers, start_date, end_date)
