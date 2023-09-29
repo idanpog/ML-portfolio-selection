@@ -21,7 +21,11 @@ END_TEST_DATE = "2023-08-31"
 
 
 def get_data(start_date, end_date):
-    CACHE_FILE = f"s&p500_data_{start_date}_{end_date}.pkl"
+
+    sanitized_start_date = str(start_date).replace(':', '_').replace(' ', '_')
+    sanitized_end_date = str(end_date).replace(':', '_').replace(' ', '_')
+
+    CACHE_FILE = f"s&p500_data_{sanitized_start_date}_{sanitized_end_date}.pkl"
     if os.path.exists(CACHE_FILE):
         # Load data from the cache file if it exists
         with open(CACHE_FILE, "rb") as file:
@@ -34,7 +38,9 @@ def get_data(start_date, end_date):
         tickers = [
             ticker.replace(".", "-") for ticker in sp_tickers["Symbol"].to_list()
         ]
+        print(f"downloading data for dates {start_date} till {end_date}")
         data = yf.download(tickers, start_date, end_date)
+
         # Save the data as a Pickle file for future use
         with open(CACHE_FILE, "wb") as file:
             pickle.dump(data, file)
