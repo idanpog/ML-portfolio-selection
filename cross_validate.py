@@ -8,7 +8,7 @@ USE_PROPHET = False
 
 def run(w, eps):
     # Fixed date: 2023-09-31
-    today = datetime(2023, 9, 30)
+    today = datetime(2023, 8, 31)
 
     sharpe_results = []
     var_results = []

@@ -28,7 +28,7 @@ class OlmarPortfolio:
         self.t = 0
         self.rel_returns = None
         self.b = None
-        self.is_prophet = True
+        self.is_prophet = False
         self.trained_models = {}
         self.prophet_predictions = None
         self.pred_returns = None
@@ -88,10 +88,16 @@ class OlmarPortfolio:
 
         return None
 
+    def filter_last_k_days(self, df, k):
+        return df.tail(k)
+
     def get_portfolio(self, train_data: pd.DataFrame):
         # if not self.is_prophet:
-        tick2df = train_data.interpolate()
-        self.olmar_rel_returns = 1 + tick2df["Adj Close"].pct_change(1).dropna()
+        not_full_train_data = self.filter_last_k_days(train_data, self.w+1)["Adj Close"]
+        # TODO: check what is the correct axis for interpolating between days and not between stocks
+        tick2df = not_full_train_data.interpolate("linear").bfill().ffill().fillna(1)
+
+        self.olmar_rel_returns = 1 + tick2df.pct_change(1)
         if not self.is_prophet:
             self.rel_returns = self.olmar_rel_returns
         inv_rel_returns = 1 / self.olmar_rel_returns
@@ -128,9 +134,9 @@ class OlmarPortfolio:
         avg_pred_price = np.mean(pred_next_price)
 
         # calculate next Lagrange multiplier
-        next_lam = (eps - b_t @ pred_next_price) / np.square(
+        next_lam = (eps - b_t @ pred_next_price) / (np.square(
             np.linalg.norm(pred_next_price - avg_pred_price)
-        )
+        ) + 0.000001)
         flag = True if next_lam > 0 else False
         next_lam = max(0.0, next_lam)
 
@@ -138,7 +144,7 @@ class OlmarPortfolio:
         normalized_b = self.new_simplex_proj(next_b)
         return normalized_b, flag
 
-    def new_simplex_proj(self, x):
+    def illai_simplex_proj(self, x):
         m = x.size
 
         s = np.sort(x)[::-1]
@@ -146,6 +152,28 @@ class OlmarPortfolio:
         h = s - c / (np.arange(m) + 1)
 
         r = np.max(np.where(h > 0)[0])
+        r = np.max(h[0])
         t = c[r] / (r + 1)
 
         return np.maximum(0, x - t)
+
+
+    def new_simplex_proj(self, y):
+        """Projection of y onto simplex."""
+        m = len(y)
+        bget = False
+
+        s = sorted(y, reverse=True)
+        tmpsum = 0.0
+
+        for ii in range(m - 1):
+            tmpsum = tmpsum + s[ii]
+            tmax = (tmpsum - 1) / (ii + 1)
+            if tmax >= s[ii + 1]:
+                bget = True
+                break
+
+        if not bget:
+            tmax = (tmpsum + s[m - 1] - 1) / m
+
+        return np.maximum(y - tmax, 0.0)
