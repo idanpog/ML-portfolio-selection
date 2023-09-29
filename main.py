@@ -1,6 +1,10 @@
 import pandas as pd
 import yfinance as yf
-from ideas.minvar_portfolio import MinVarPortfolio as Portfolio
+#from ideas.minvar_portfolio import MinVarPortfolio as Portfolio
+#from ideas.prophet_portfolio import ProphetPortfolio as Portfolio
+from ideas.Olmar_regular import OlmarPortfolio as Portfolio
+#from ideas.olmar import olmar as Portfolio
+#from ideas.market_portfolio import MarketPortfolio as Portfolio
 import numpy as np
 import pickle
 import os
@@ -9,11 +13,11 @@ import os
 # END_TEST_DATE = '2022-09-30'
 # END_TRAIN_DATE = '2022-08-31'
 
-START_DATE = '2022-08-01'
+START_DATE = '2016-08-01'
 END_TRAIN_DATE = '2023-08-01'
 END_TEST_DATE = '2023-08-31'
 
-def get_data():
+def get_data(start_date,  end_date):
     CACHE_FILE = 's&p500_data.pkl'
     if os.path.exists(CACHE_FILE):
         # Load data from the cache file if it exists
@@ -24,7 +28,6 @@ def get_data():
         sp_tickers = wiki_table[0]
         tickers = [ticker.replace('.', '-') for ticker in sp_tickers['Symbol'].to_list()]
         data = yf.download(tickers, START_DATE, END_TEST_DATE)
-
         # Save the data as a Pickle file for future use
         with open(CACHE_FILE, 'wb') as file:
             pickle.dump(data, file)
@@ -32,7 +35,7 @@ def get_data():
     return data
 
 
-def test_portfolio():
+def test_portfolio(start):
     full_train = get_data()
     returns = []
     strategy = Portfolio()
