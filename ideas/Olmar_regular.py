@@ -22,8 +22,8 @@ logger.setLevel(logging.CRITICAL)
 
 class OlmarPortfolio:
     def __init__(self, **kwargs):
-        self.eps = 2
-        self.w = 60
+        self.eps = 2.897811214769126
+        self.w = 25
         self.train_data_length = None
         self.t = 0
         self.rel_returns = None
