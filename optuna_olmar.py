@@ -23,17 +23,18 @@ def objective(trial):
 def main():
     # Maximize cross_validation.run function
     study = optuna.create_study(directions=["maximize",'minimize'])
-    study.optimize(objective, timeout=60,n_trials =40)
+    study.optimize(objective, timeout=10800,show_progress_bar=True)
     complete_trials = study.get_trials(deepcopy=False, states=[TrialState.COMPLETE])
-    df = pd.DataFrame(complete_trials)
-
+    complete_trials = [{'number': trial.number, 'value': trial.values, 'params': trial.params} for trial in complete_trials]
     # Save the DataFrame to a CSV file.
+    df  = pd.DataFrame(complete_trials)
     df.to_csv("all_trials.csv", index=False)
-    print(study.best_trial)
+    print(study.best_trials)
     # save the best parameters
-    with open("optuna_olmar_best_params.txt", "w") as f:
-        f.write(str(study.best_trials))
-
+    best_trials = study.best_trials
+    best_trials = [{'number': trial.number, 'value': trial.values, 'params': trial.params} for trial in best_trials]
+    df = pd.DataFrame(best_trials)
+    df.to_csv("best_trials.csv", index=False)
 
 if __name__ == "__main__":
     main()

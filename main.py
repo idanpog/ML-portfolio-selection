@@ -4,7 +4,7 @@ import yfinance as yf
 # from ideas.minvar_portfolio import MinVarPortfolio as Portfolio
 # from ideas.prophet_portfolio import ProphetPortfolio as Portfolio
 from ideas.Olmar_regular import OlmarPortfolio as Portfolio
-
+from ideas.minvar_portfolio import minvar as Portfolio
 # from ideas.olmar import olmar as Portfolio
 # from ideas.market_portfolio import MarketPortfolio as Portfolio
 import numpy as np

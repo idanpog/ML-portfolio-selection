@@ -134,9 +134,12 @@ class OlmarPortfolio:
         avg_pred_price = np.mean(pred_next_price)
 
         # calculate next Lagrange multiplier
-        next_lam = (eps - b_t @ pred_next_price) / (np.square(
-            np.linalg.norm(pred_next_price - avg_pred_price)
-        ) + 0.000001)
+        try :
+            next_lam = (eps - b_t @ pred_next_price) / (np.square(
+                np.linalg.norm(pred_next_price - avg_pred_price)
+            ) + 0.000001)
+        except:
+            next_lam =0
         flag = True if next_lam > 0 else False
         next_lam = max(0.0, next_lam)
 

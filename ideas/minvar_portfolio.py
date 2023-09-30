@@ -32,7 +32,7 @@ class MinVarPortfolio(Portfolio):
 
     def train(self, tick2df: dict) -> None:
         # Process prices and drop stocks with NaN values
-        prices = tick2df['Adj Close'].interpolate('linear').dropna(axis=1)
+        prices = tick2df['Adj Close'].interpolate('linear').bfill().ffill().fillna(1)
         returns = prices.pct_change(1)
 
         # Compute covariance and portfolio weights for valid stocks

@@ -1,6 +1,6 @@
 from main import test_portfolio
 import numpy as np
-
+from tqdm import tqdm
 from datetime import datetime, timedelta
 
 USE_PROPHET = False
@@ -13,7 +13,7 @@ def run(w, eps):
     sharpe_results = []
     var_results = []
 
-    for i in range(12):
+    for i in tqdm(range(8)):
         # Calculate the last day of the current month
         end_test_date = today.replace(day=1) - timedelta(days=1)
 
